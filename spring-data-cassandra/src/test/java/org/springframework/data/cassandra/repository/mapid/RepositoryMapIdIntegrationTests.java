@@ -18,6 +18,7 @@ package org.springframework.data.cassandra.repository.mapid;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.data.cassandra.core.mapping.BasicMapId.*;
 
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,8 @@ import org.springframework.data.cassandra.repository.support.AbstractSpringDataE
 import org.springframework.data.cassandra.repository.support.IntegrationTestConfig;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 /**
  * Integration tests for repositories using {@link MapId}.
@@ -108,6 +111,11 @@ public class RepositoryMapIdIntegrationTests extends AbstractSpringDataEmbeddedC
 		assertThat(selected.getKey0()).isEqualTo(saved.getKey0());
 		assertThat(selected.getKey1()).isEqualTo(saved.getKey1());
 		assertThat(selected.getValue()).isEqualTo(saved.getValue());
+
+		List<MultiPrimaryKeyColumns> allById = multiPrimaryKeyColumnsRepository.findAllById(Lists.newArrayList(id));
+		assertThat(allById.size()).isEqualTo(1);
+		assertThat(allById.get(0).getValue()).isEqualTo(saved.getValue());
+
 
 		// update
 		selected.setValue(uuid());
